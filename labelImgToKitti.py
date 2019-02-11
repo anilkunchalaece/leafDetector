@@ -21,6 +21,7 @@ class LabelImg2Kitti:
             shutil.rmtree(self.desDir)
         os.mkdir(self.desDir)
         self.xmlFileList = self.getAllXMLFiles()
+        self.xmlData = list()
 
     def convertAllFilesInDir(self) :
         for fileName in self.xmlFileList :
@@ -41,15 +42,26 @@ class LabelImg2Kitti:
         return xmlList
     
     def convertXMLFileToKitti(self,fileName):
+        #reintialize the list
+        self.xmlData = []
         xmlRoot = ElementTree.parse(fileName).getroot()
         for element in xmlRoot.findall('object'):
             bbox = element.find('bndbox')
-            self.xmin = str(float(bbox.find('xmin').text))
-            self.ymin = str(float(bbox.find('ymin').text))
-            self.xmax = str(float(bbox.find('xmax').text))
-            self.ymax = str(float(bbox.find('ymax').text))
-            self.truncated = str(float(element.find('truncated').text))
-            self.labelName = element.find('name').text
+            xmin = str(float(bbox.find('xmin').text))
+            xmax = str(float(bbox.find('xmax').text))
+            ymin = str(float(bbox.find('ymin').text))
+            ymax = str(float(bbox.find('ymax').text))
+            truncated = str(float(element.find('truncated').text))
+            labelName = element.find('name').text
+            self.xmlData.append({
+                'xmin' : xmin,
+                'ymin' : ymin,
+                'ymax' : ymax,
+                'xmax' : xmax,
+                'truncated' : truncated,
+                'labelName' : labelName
+            })
+            
     
     
     def writeToFile(self,fileName):
@@ -74,38 +86,38 @@ class LabelImg2Kitti:
                             detection, needed for p/r curves, higher is better
         '''
         self.defineIgnoredElemets()
-        
         fHandler = open(fileName,'w')
-        fHandler.write(self.labelName)
-        fHandler.write(' ')
-        fHandler.write(self.truncated)
-        fHandler.write(' ')
-        fHandler.write(self.occluded)
-        fHandler.write(' ')
-        fHandler.write(self.alpha)
-        fHandler.write(' ')
-        fHandler.write(self.xmin)
-        fHandler.write(' ')
-        fHandler.write(self.ymin)
-        fHandler.write(' ')
-        fHandler.write(self.xmax)
-        fHandler.write(' ')
-        fHandler.write(self.ymax)
-        fHandler.write(' ')
-        fHandler.write(self.dimHeight)
-        fHandler.write(' ')
-        fHandler.write(self.dimWidth)
-        fHandler.write(' ')
-        fHandler.write(self.dimLength)
-        fHandler.write(' ')
-        fHandler.write(self.locationX)
-        fHandler.write(' ')
-        fHandler.write(self.locationY)
-        fHandler.write(' ')
-        fHandler.write(self.locationZ)
-        fHandler.write(' ')
-        fHandler.write(self.rotationY)
-        fHandler.write("\n")
+        for ele in self.xmlData : 
+            fHandler.write(ele['labelName'])
+            fHandler.write(' ')
+            fHandler.write(ele['truncated'])
+            fHandler.write(' ')
+            fHandler.write(self.occluded)
+            fHandler.write(' ')
+            fHandler.write(self.alpha)
+            fHandler.write(' ')
+            fHandler.write(ele['xmin'])
+            fHandler.write(' ')
+            fHandler.write(ele['ymin'])
+            fHandler.write(' ')
+            fHandler.write(ele['xmax'])
+            fHandler.write(' ')
+            fHandler.write(ele['ymax'])
+            fHandler.write(' ')
+            fHandler.write(self.dimHeight)
+            fHandler.write(' ')
+            fHandler.write(self.dimWidth)
+            fHandler.write(' ')
+            fHandler.write(self.dimLength)
+            fHandler.write(' ')
+            fHandler.write(self.locationX)
+            fHandler.write(' ')
+            fHandler.write(self.locationY)
+            fHandler.write(' ')
+            fHandler.write(self.locationZ)
+            fHandler.write(' ')
+            fHandler.write(self.rotationY)
+            fHandler.write("\n")
         fHandler.close()
 
     def defineIgnoredElemets(self):
@@ -124,7 +136,7 @@ class LabelImg2Kitti:
 
 
 def main() :
-    SRC_DIR = 'singleLeaf'
+    SRC_DIR = 'multiLeafResized'
     convertToKitti = LabelImg2Kitti(SRC_DIR) 
     # convertToKitti.convertXMLFileToKitti('singleLeaf/IMG_20190201_165039.xml') 
     # convertToKitti.writeToFile('singleLeaf/IMG_20190201_165039.txt')

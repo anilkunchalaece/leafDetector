@@ -52,8 +52,8 @@ class DevideDataSet:
 
 
 def main():
-    ROOT_DIR = 'singleLeaf'
-    EVAL_PERCENTAGE = 0.20
+    ROOT_DIR = 'multiLeafResized'
+    EVAL_PERCENTAGE = 0.30
     data = DevideDataSet(ROOT_DIR)
     data.devideData(EVAL_PERCENTAGE)
 
