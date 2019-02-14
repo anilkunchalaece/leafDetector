@@ -96,16 +96,15 @@ class ResizeWithBbox:
         fHandler.close()
 
 
-
     
 
 def main():
     SRC_IMG_DIR = "/home/ic/Documents/leafData/org/"
-    DES_IMG_DIR = "/home/ic/Documents/leafData/resize/"
+    DES_IMG_DIR = "/home/ic/Documents/leafData/resize640/"
     # used for both tensorflow and digits 
     # based on article Exploring SpaceNet dataset using Digits
-    DES_IMG_HEIGHT = 1280
-    DES_IMG_WIDTH = 1280
+    DES_IMG_HEIGHT = 640
+    DES_IMG_WIDTH = 640
     RESIZE_RATIO = (DES_IMG_HEIGHT,DES_IMG_WIDTH)
     imgResize = ResizeWithBbox(SRC_IMG_DIR,DES_IMG_DIR,RESIZE_RATIO)
     imgResize.resizeAllImagesInDir()
